@@ -1,7 +1,17 @@
-import type { ReactNode } from 'react';
-import { HomeLayout } from 'fumadocs-ui/layouts/home';
-import { baseOptions } from '@/app/layout.config';
+import { DocsLayout } from "fumadocs-ui/layouts/notebook";
+import type { ReactNode } from "react";
+import { baseOptions } from "@/lib/layout.config";
+import { source } from "@/lib/source";
 
 export default function Layout({ children }: { children: ReactNode }) {
-  return <HomeLayout {...baseOptions}>{children}</HomeLayout>;
+  return (
+    <DocsLayout
+      {...baseOptions}
+      tree={source.pageTree}
+      sidebar={{ hidden: true, collapsible: false }}
+      nav={{ ...baseOptions.nav, mode: "top" }}
+    >
+      {children}
+    </DocsLayout>
+  );
 }
