@@ -1,5 +1,6 @@
 import { rehypeCodeDefaultOptions } from "fumadocs-core/mdx-plugins";
 import {
+  defineCollections,
   defineConfig,
   defineDocs,
   frontmatterSchema,
@@ -13,12 +14,28 @@ export const docs = defineDocs({
   docs: {
     schema: frontmatterSchema.extend({
       showFolderCards: z.boolean().default(false),
+      order: z.number().optional()
     }) as any,
   },
   meta: {
     schema: metaSchema.extend({
       // other props
     }),
+  },
+});
+
+// ✅ NEW: a second, isolated docs collection for `_shorts`
+export const shorts = defineDocs({
+  dir: "content/shorts", //
+  docs: {
+    // extend or leave as-is; minimal is fine
+    schema: frontmatterSchema.extend({
+      // add any per-note fields if you like
+      category: z.string().optional()
+    }) as any,
+  },
+  meta: {
+    schema: metaSchema.extend({}),
   },
 });
 

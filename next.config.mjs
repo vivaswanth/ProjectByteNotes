@@ -1,4 +1,9 @@
 import { createMDX } from "fumadocs-mdx/next";
+import { fileURLToPath } from "url";
+import { dirname } from "path";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const withMDX = createMDX();
 
@@ -6,6 +11,12 @@ const withMDX = createMDX();
 const config = {
   reactStrictMode: true,
   serverExternalPackages: ["typescript", "twoslash", "zod", "envin"],
+  images: {
+    unoptimized: true,
+  },
+  turbopack: {
+    root: __dirname, // tells Next.js where the root is
+  },
 };
 
 export default withMDX(config);

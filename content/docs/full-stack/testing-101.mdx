@@ -1,0 +1,42 @@
+---
+title: Testing 101
+description: Testing basics, methodologies, and best practices for ensuring software quality.
+---
+
+## Introduction
+Testing / QA process is a critical aspect of software development that ensures code quality, reliability, and maintainability. 
+
+import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
+import { FolderCardsWithSheets } from "@/components/folder-cards-with-sheets";
+import { DynamicSheet } from "@/components/dynamic-sheets";
+import { ShortsGrid } from "@/components/shorts-grid";
+import { shortsSource } from "@/lib/source";
+import { BoxIcon } from 'lucide-react';
+
+<Accordions type="multiple">
+  <Accordion title="Testing Approaches">
+    - `Pro-active Testing` → Write tests before or during dev to catch issues early.
+      - Test Driven Development (TDD): at unit level (java methods).
+      - Behavior Driven Development (BDD): at method (business workflow).
+    - `Reactive Testing` → Writing tests after dev to verify functionality + catch bugs.
+      - Exploratory Testing: Manual testing to explore app behavior.
+      - Regression Testing: Re-running existing tests to ensure changes don’t break functionality.
+      - Automated Testing: Using tools to run test automation (unit, integration, E2E).
+  </Accordion>
+  <Accordion title="Testing Types">
+    | <BoxIcon className="text-black" strokeWidth="1" fill="white" />White-box | <BoxIcon className="text-white" strokeWidth="1" fill="black" />Black-box | <BoxIcon className="text-black" strokeWidth="1" fill="gray" />Grey-box |
+    | -----------|-----------|----------|
+    | Full code access | No code access | Partial code access |
+    | Tests Internal Logic | Tests External Behavior| Tests Interactions |
+    | Fast and Isolated | Slower and End-to-End | Moderate and API Focused |
+    | Code correctness | Requirements fulfillment | Component interaction |
+    | Unit Testing, Code Coverage | E2E Testing, Functional Testing | Integration Testing |
+    | Eg: JUnit, Mockito | Eg: Selenium, Cucumber | Eg: Spring Boot Test |
+  </Accordion>
+  <Accordion title="Testing Techniques">
+    <ShortsGrid folder="testing" />
+  </Accordion>
+  <Accordion title="Testing Tools & Frameworks">
+    <ShortsGrid folder="testing" />
+  </Accordion>
+</Accordions>

@@ -9,17 +9,19 @@ import { ThemeProvider } from "@/providers/theme";
 
 export const metadata = createMetadata({
   title: {
-    template: "%s | Envin",
-    default: "Envin - Type-safe env validation with live previews",
+    template: "%s | The Byte Notes",
+    default: "The Byte Notes - Consortium for tech articles",
   },
   description:
-    "Framework-agnostic, type-safe tool to validate and preview your environment variables—powered by your favorite schema validator.",
+    "Personal articles on connecting dots, pretty much everything tech - programming, cloud, architecture, databases, devops, and more.",
 });
 
 export default function Layout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={cn("flex min-h-screen flex-col", fonts)}>
+      <body className={cn("flex min-h-screen flex-col", fonts)} suppressHydrationWarning>
+        <div className="fixed top-0 bottom-0  inset-y-0 left-0 w-1/14 bg-topography pointer-events-none"></div>
+        <div className="fixed top-0 bottom-0  inset-y-0 right-0 w-1/14 bg-topography pointer-events-none"></div>
         <ThemeProvider>
           <RootProvider>{children}</RootProvider>
           <Analytics />

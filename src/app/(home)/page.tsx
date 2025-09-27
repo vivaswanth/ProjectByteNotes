@@ -1,7 +1,7 @@
 import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
-import { GITHUB_URL, TURBOSTARTER_URL, X_USERNAME } from "@/lib/constants";
+import { GITHUB_URL, TURBOSTARTER_URL } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
 export default function Home() {
@@ -70,12 +70,12 @@ const Footer = () => {
         </a>{" "}
         by{" "}
         <a
-          href={`https://x.com/${X_USERNAME}`}
+          href={GITHUB_URL}
           target="_blank"
           rel="noreferrer"
           className="text-primary underline"
         >
-          @{X_USERNAME}
+          @vivaswanth
         </a>
       </p>
     </footer>

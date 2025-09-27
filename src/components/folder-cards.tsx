@@ -2,10 +2,12 @@
 
 'use client';
 
-import Link from 'next/link';
+import { Cards, Card } from 'fumadocs-ui/components/card';
+import { BoxIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 interface CardItem {
+  order: number;
   slug: string;
   title: string;
   description?: string;
@@ -17,29 +19,27 @@ interface Props {
 
 export function FolderCards({ folder }: Props) {
   const [cards, setCards] = useState<CardItem[]>([]);
-
-  console.log("FolderCards rendered with folder:", folder);
   useEffect(() => {
     const fetchCards = async () => {
       const res = await fetch(`/api/folder-cards?folder=${folder.join('/')}`);
       const data = await res.json();
+      data.sort((a: CardItem, b: CardItem) => (a.order < b.order ? 1 : -1));
       setCards(data);
     };
     fetchCards();
   }, [folder]);
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-2">
+    <Cards>
       {cards.map((item) => (
-        <Link
+        <Card
+          icon={<BoxIcon className="text-green-300" />}
           key={item.slug}
+          title={item.title}
           href={`./${folder[1]}/${item.slug}`}
-          className="border rounded-lg p-4 hover:shadow transition"
-        >
-          <h3 className="text-lg font-semibold">{item.title}</h3>
-          {item.description && <p className="text-sm text-gray-600">{item.description}</p>}
-        </Link>
+          description={item.description}
+        />
       ))}
-    </div>
+    </Cards>
   );
 }

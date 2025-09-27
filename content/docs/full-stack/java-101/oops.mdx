@@ -1,53 +1,152 @@
 ---
-title: OOPS Concepts
-description: High-level overview of Object oriented programming
+title: Why the need for OOPS ?
+description: Why do we need OOPS ? Why not just write code in a linear fashion ?
+order: 1
 ---
 
-## OOPS concepts
-### Foundation for clean, maintainable, reusable architecture
+## Problems with earlier programming paradigms
 
-- **Abstraction** - Hides internal complexities, exposing only vital interfaces. This makes systems easier to design and maintain.
+1. **Procedural Programming** - Code is organized as procedures or routines. Works well for
+   simple, linear tasks but struggles with complexity and scalability.
 
-Encapsulation: Packages data and methods; guards against unintended side effects.
+   Why did procedural programming (like C) hit limitations?
+    - As programs grew, procedural code became harder to maintain.
+    - Everything lived in the global namespace → tight coupling, spaghetti code.
+    - Reuse was limited — “copy-paste” programming.
+    - No standard way to structure large-scale systems.
 
-Inheritance: Promotes code reuse by letting classes inherit traits.
+2. **Structured Programming** - Introduced control structures (if, while, for) to improve flow.
+   Reduced goto usage, making code clearer.
+    - Improved readability and maintainability.
+    - Encouraged modular design with functions.
+    - Still relied on global state → tight coupling.
+    - Limited in handling complex data.
 
-Polymorphism: Allows one interface to represent different underlying types; enables flexible, extensible code.
+## Object-Oriented Programming (OOP)
+    - Organizes code around objects that combine data and behavior. 
+    - Better models real-world entities, promotes reuse, and manages complexity.
+    - OOP emerged to solve scalability, modularity, and reusability problems by mimicking how we think about the real world: objects with responsibilities.
 
-Why they matter: They enable patterns like those in the Design Patterns: GoF book for creating robust, reusable designs.
 
-# JDK -> JVM -> JRE
-### Essential for effective setup, deployment, performance tuning
+### 🧩 Abstraction — *Only tell me what I need to know*
 
-# Memory Allocation
-### Manage resource use for responsive, robust systems
+> You drive a car with the steering wheel. You don’t care how the engine or transmission works.
 
-# Methods
+Thats exactly what abstraction is about.
+- Reduces cognitive overload: Manage complexity by hiding irrelevant details.
+- Behaviour over implementation: Focus on *what* an object does, not *how* it does it.
+- Encourages loose coupling: Accomodate changes without affecting others.
+- Design by contract: Design contracts / interfaces for multiple systems to interact.
 
-# Data Structures
+```java
+interface PaymentProcessor {
+    void processPayment(double amount);
+}
 
-# Exception Handling
+class StripeProcessor implements PaymentProcessor {
+    public void processPayment(double amount) {
+        // Stripe-specific logic
+    }
+}
+```
 
-# Garbage Collection
+### 🔒 Encapsulation — *Protect the integrity of your data*
 
-# Collections Framework
-### Handling and transforming data effectively and cleanly
+> A bank account doesn’t let you directly set your balance — you use a method that enforces rules.
 
-# Multi-threading
+- Bundles data and methods: Groups related state and behavior.
+- Access control: Use access modifiers (private / public) to restrict direct access.
+- Maintains invariants: Ensure object responsible for their own state.
+- Reduces unintended interaction: Hide internal workings, preserve integrity.
 
-# File Handling
+```java
+public class BankAccount {
+    private double balance;
 
-# Java I/O
+    public void deposit(double amount) {
+        if (amount > 0) this.balance += amount;
+    }
 
-# Synchronization
-### For scalable, safe task execution
+    public double getBalance() {
+        return this.balance;
+    }
+}
+```
 
-# Regex
+### 🧬 Inheritance — *Don’t reinvent the wheel*
 
-# Networking
+> A Dog is an Animal. It inherits traits (like eating) and adds its own (like barking).
 
-# JDBC Connectivity
+- Promotes code reuse: Share common functionality via base classes.
+- Establishes hierarchies: Model "is-a" relationships (e.g., Dog is an Animal).
+- Enables polymorphism: Treat subclasses as their parent type.
+- Facilitates extensibility: Add new features by extending existing classes.
 
-# Whats new in Java 21
+```java
+class Animal { 
+    void eat() { System.out.println("Eating"); }
+}  
 
-# 
+class Dog extends Animal { 
+    void bark() { System.out.println("Barking"); } 
+}  
+```
+
+<Callout type="warn">
+    Use inheritance only when the relationship is truly hierarchical — otherwise, prefer composition.
+</Callout>
+
+When to use inheritance vs composition:
+- **Inheritance**: Use when there is a clear "is-a" relationship and you want to share behavior.
+- **Composition**: Use when you want to build complex types by combining simpler ones, favoring flexibility over rigid hierarchies.
+
+### 🎭 Polymorphism — *One interface, many forms*
+
+> A single function can operate on different types of objects.
+
+- Unified interface: Use a common interface for different underlying forms (e.g., shapes).
+- Flexibility: Write code that works with any subclass of a base class.
+- Extensibility: Add new types without changing existing code.
+- Dynamic behavior: Method overriding allows runtime decision of which method to invoke.
+
+```java
+class Shape {
+    void draw() { System.out.println("Drawing Shape"); }
+}
+class Circle extends Shape {
+    void draw() { System.out.println("Drawing Circle"); }
+}
+class Square extends Shape {
+    void draw() { System.out.println("Drawing Square"); }
+}
+void render(Shape s) {
+    s.draw(); // Calls the appropriate draw() based on the actual object type
+}
+```
+<Callout type="info">
+    Polymorphism is often achieved through method overriding (runtime) and method overloading (compile-time).
+</Callout>  
+
+### Solid Principles
+- **S**ingle Responsibility Principle: A class should have one reason to change.
+- **O**pen/Closed Principle: Entities should be open for extension, but closed for modification.
+- **L**iskov Substitution Principle: Subtypes must be substitutable for their base types.
+- **I**nterface Segregation Principle: Many specific interfaces are better than one general-purpose interface.
+- **D**ependency Inversion Principle: Depend on abstrations, not on concretions.
+
+### OOP Design Principles
+- Favor composition over inheritance.
+- Program to an interface, not an implementation.
+- Keep classes focused and cohesive.
+- Use design patterns to solve common problems.
+
+### Design Patterns
+- **Creational**: Singleton, Factory, Builder
+- **Structural**: Adapter, Composite, Decorator
+- **Behavioral**: Strategy, Observer, Command
+
+### Further Reading
+- [Alan Kay on OOP](https://wiki.c2.com/?AlanKayOnObjectOrientedProgramming)
+- [Oracle Java OOP Docs](https://docs.oracle.com/javase/tutorial/java/concepts/)
+- [Baeldung: OOP in Java](https://www.baeldung.com/java-oop-concepts)
+- [Design Patterns: GoF (Book)](https://en.wikipedia.org/wiki/Design_Patterns)

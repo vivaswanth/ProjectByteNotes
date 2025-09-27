@@ -1,0 +1,262 @@
+---
+title: JUnit 5 Basics
+description: To verify your code works as expected, automatically. Think of it like writing a checklist that the computer runs for you.
+---
+___
+import { Step, Steps } from 'fumadocs-ui/components/steps';
+
+<Steps>
+    <Step>
+        ## How do we test ? 
+        AAA Testing: Arrange → Act → Assert
+        - Arrange: set up the objects and prepare the prerequisites for your test.
+        - Act: execute the method or functionality you want to test.
+        - Assert: verify that the outcome is as expected using assertions.
+        - This keeps tests clear and structured.
+        <Callout type="info">
+            It's like cooking: Arrange → gather ingredients. Act → cook the dish. Assert → taste and check if it’s right.
+        </Callout>
+    </Step>
+    <Step>
+        ## What is JUnit 5?
+        JUnit 5 = JUnit Platform + JUnit Jupiter + JUnit Vintage
+        - JUnit Platform: foundation for launching testing frameworks on the JVM.
+        - JUnit Jupiter: new programming model and extension model for writing tests and extensions in Java 8+.
+        - JUnit Vintage: provides support for running JUnit 3 and JUnit 4 based tests on the JUnit 5 platform.
+        - Modular architecture → pick what you need.
+    </Step>
+    <Step>
+        ## Anatomy of a Test
+        ```java
+        import org.junit.jupiter.api.Test;
+        import static org.junit.jupiter.api.Assertions.*;
+
+        class CalculatorTest {
+            @Test
+            void testAddition() {
+                Calculator calc = new Calculator();
+                assertEquals(5, calc.add(2, 3));
+            }
+        }
+        ```
+        - `@Test` marks a method as a test case.
+        - `assertEquals(expected, actual)` checks if the result matches expectation.
+    </Step>
+    <Step>
+        ## Test Lifecycle
+        Why: Reuse setup code, clean resources.
+        ```java
+        import org.junit.jupiter.api.*;
+
+        class ExampleTest {
+            @BeforeAll static void initAll() { System.out.println("Runs once before all tests"); }
+            @BeforeEach void init() { System.out.println("Runs before each test"); }
+
+            @Test void test1() { System.out.println("Test 1"); }
+            @Test void test2() { System.out.println("Test 2"); }
+
+            @AfterEach void tearDown() { System.out.println("After each test"); }
+            @AfterAll static void tearDownAll() { System.out.println("After all tests"); }
+        }
+        ```
+        Common pattern:
+        @BeforeAll → DB connections, heavy setup
+        @BeforeEach → new object creation
+        @AfterEach → cleanup
+        @AfterAll → release resources
+    </Step>
+    <Step>
+        ## Assertions
+        Why: Compare outcomes - actual vs expected.
+        ```java
+        assertEquals(10, result);
+        assertTrue(name.startsWith("V"));
+        assertFalse(list.isEmpty());
+        assertThrows(IllegalArgumentException.class, () -> myService.doSomething(null));
+        assertAll(
+        () -> assertEquals("John", user.getName()),
+        () -> assertEquals(28, user.getAge())
+        );
+        ```
+
+        | Assertion              | Purpose                                                      |
+        |------------------------|--------------------------------------------------------------|
+        | `assertEquals(expected, actual)` | Checks if two values are equal                     |
+        | `assertNotEquals(unexpected, actual)` | Checks if two values are not equal            |
+        | `assertTrue(condition)` | Checks if a condition is true                               |
+        | `assertFalse(condition)` | Checks if a condition is false                             |
+        | `assertNull(object)`    | Checks if an object is null                                 |
+        | `assertNotNull(object)` | Checks if an object is not null                             |
+        | `assertArrayEquals(expectedArray, actualArray)` | Checks if two arrays are equal      |
+        | `assertThrows(expectedType, executable)` | Asserts that a specific exception is thrown|
+        | `assertAll(executables...)` | Groups multiple assertions, reporting all failures      |
+        | `fail(message)`         | Fails a test with a given message                           |
+    </Step>
+    <Step>
+        ## Parameterized Tests
+        Why: Run same test with different inputs.
+        ```java
+        import org.junit.jupiter.params.ParameterizedTest;
+        import org.junit.jupiter.params.provider.ValueSource;
+        import static org.junit.jupiter.api.Assertions.*;
+
+        class PalindromeTest {
+            @ParameterizedTest
+            @ValueSource(strings = {"racecar", "radar", "level"})
+            void testIsPalindrome(String candidate) {
+                assertTrue(isPalindrome(candidate));
+            }
+
+            boolean isPalindrome(String str) {
+                return new StringBuilder(str).reverse().toString().equals(str);
+            }
+        }
+        ```
+        - `@ParameterizedTest` marks a test that runs multiple times with different arguments.
+        - `@ValueSource` provides the input values.
+        - Avoids writing 3+ separate test methods.
+        </Step>
+    <Step>
+        ## Test Suites
+        Why: Group related tests.
+        ```java
+        import org.junit.platform.suite.api.SelectClasses;
+        import org.junit.platform.suite.api.Suite;
+
+        @Suite
+        @SelectClasses({CalculatorTest.class, StringUtilsTest.class})
+        public class AllTests {
+        }
+        ```
+        - `@Suite` marks a class as a test suite.
+        - `@SelectClasses` specifies which test classes to include.
+        - Run multiple test classes together.
+        - Useful for organizing large test codebases.
+    </Step>
+    <Step>
+        ## Nested Tests
+        Why: Group related tests within a class.
+        ```java
+        import org.junit.jupiter.api.*;
+        import static org.junit.jupiter.api.Assertions.*;
+        class OuterTest {
+            @BeforeEach void setup() { System.out.println("Outer setup"); }
+
+            @Test void outerTest() { assertTrue(true); }
+
+            @Nested
+            class InnerTest {
+                @BeforeEach void innerSetup() { System.out.println("Inner setup"); }
+
+                @Test void innerTest() { assertTrue(true); }
+            }
+        }
+        ```
+        - `@Nested` creates a nested test class.
+        - Inner tests can have their own lifecycle methods.
+        - Helps organize tests that share common setup.
+    </Step>
+    <Step>
+        ## Extensions
+        Why: Add reusable functionality to tests.
+        ```java
+        import org.junit.jupiter.api.extension.*;
+        import org.junit.jupiter.api.Test;
+        import static org.junit.jupiter.api.Assertions.*;
+
+        class TimingExtension implements BeforeTestExecutionCallback, AfterTestExecutionCallback {
+            private long startTime;
+
+            @Override
+            public void beforeTestExecution(ExtensionContext context) {
+                startTime = System.currentTimeMillis();
+            }
+
+            @Override
+            public void afterTestExecution(ExtensionContext context) {
+                long duration = System.currentTimeMillis() - startTime;
+                System.out.println("Test " + context.getDisplayName() + " took " + duration + " ms");
+            }
+        }
+
+        @ExtendWith(TimingExtension.class)
+        class MyTests {
+            @Test void testSomething() { assertTrue(true); }
+        }
+        ```
+        - `@ExtendWith` applies an extension to a test class or method.
+        - Extensions can hook into the test lifecycle to add behavior (e.g., timing, logging).
+        - Promotes code reuse across multiple tests.
+    </Step>
+    <Step>
+        ## Mocks & Stubs
+        Why: Replace dependencies with fake ones. Isolate a unit under test.
+        ```java
+        import org.junit.jupiter.api.Test;
+        import org.mockito.InjectMocks;
+        import org.mockito.Mock;
+        import org.mockito.junit.jupiter.MockitoExtension;
+        import static org.mockito.Mockito.*;
+        import static org.junit.jupiter.api.Assertions.*;
+        @ExtendWith(MockitoExtension.class)
+        class UserServiceTest {
+            @Mock UserRepository userRepository;
+            @InjectMocks UserService userService;
+
+            @Test void testGetUser() {
+                when(userRepository.findById(1)).thenReturn(new User(1, "Alice"));
+                User user = userService.getUser(1);
+                assertEquals("Alice", user.getName());
+                verify(userRepository).findById(1);
+            }
+        }
+        ```
+        - `@Mock` creates a mock instance of a dependency.
+        - `@InjectMocks` injects mocks into the class under test.
+        - `when(...).thenReturn(...)` stubs method calls on the mock.
+        - `verify(...)` checks interactions with the mock.
+        - Test UserService without hitting real DB.
+    </Step>
+    <Step>
+        ## Some common annotations
+        | Annotation         | Purpose                                                                  |
+        |--------------------|--------------------------------------------------------------------------|
+        | `@Test`            | Marks a method as a test case                                            |
+        | `@BeforeEach`      | Runs before each test method                                             |
+        | `@AfterEach`       | Runs after each test method                                              |
+        | `@BeforeAll`       | Runs once before all tests (static method)                               |
+        | `@AfterAll`        | Runs once after all tests (static method)                                |
+        | `@Disabled`        | Skips a test method                                                      |
+        | `@ParameterizedTest` | Runs the same test with different inputs                               |
+        | `@ValueSource`     | Provides values for parameterized tests                                  |
+        | `@CsvSource`       | Provides CSV values for parameterized tests                              |
+        | `@MethodSource`    | Provides method-generated values for tests                               |
+        | `@Nested`          | Groups related tests in inner classes                                    |
+        | `@Tag`             | Categorizes tests for selective execution                                |
+        | `@DisplayName`     | Custom name for test classes/methods                                     |
+        | `@ExtendWith`      | Integrates extensions (e.g., Mockito)                                    |
+        | `@TestInstance`    | Controls test instance lifecycle (per class or per method)               |
+        | `@Timeout`         | Fails a test if it exceeds a specified duration                          |
+        | `@RepeatedTest`    | Repeats a test a specified number of times                               |
+        | `@TestMethodOrder` | Specifies the order of test method execution                             |
+        | `@TestFactory`     | Creates dynamic tests at runtime                                         |
+        | `@TestTemplate`    | Template for repeated tests with different contexts                      |
+        | `@RegisterExtension` | Registers a JUnit extension programmatically                           |
+        | `@Assertions`      | Provides various assertion methods                                       |
+        | `@Assumptions`     | Provides methods to make assumptions in tests                            |
+        | `@ConditionEvaluationResult` | Used in custom extensions to evaluate conditions               |
+        | `@TestReporter`    | Injects a TestReporter to publish additional data about the current test |
+        | `@TestInfo`        | Injects TestInfo to get information about the current test               |
+        | `@DynamicTest`     | Represents a single dynamic test                                         |
+        | `@DynamicContainer` | Represents a container of dynamic tests                                 |
+        | `@Execution`       | Configures parallel execution of tests                                   |
+        | `@ResourceLock`    | Prevents concurrent access to shared resources                           |
+        | `@TempDir`         | Provides a temporary directory for tests                                 |
+        | `@TestTemplateInvocationContextProvider` | Provides contexts for test templates               |
+        | `@TestTemplateInvocationContext` | Represents a single invocation context for a test template |
+    </Step>
+    <Step>
+        ## Resources and further exploring
+        - [JUnit 5 User Guide](https://junit.org/junit5/docs/current/user-guide/)
+    </Step>
+</Steps>

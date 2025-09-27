@@ -1,0 +1,100 @@
+---
+title: Java Testing
+description: Overview of testing frameworks and methodologies in Java.
+showFolderCards: false
+---
+
+## 📌 Pre-requisites
+<Cards>
+  <Card title="Java 101" href="/docs/full-stack/java-101" description="Overview of Java programming concepts." />
+  <Card title="QA 101" href="/docs/full-stack/qa-101" description="Testing basics, methodologies, and best practices for ensuring software quality." />
+</Cards>
+
+## 🎯 Testing Roadmap
+
+import { Step, Steps } from 'fumadocs-ui/components/steps';
+
+<Steps>
+  <Step>
+    ### Unit Testing Foundations
+    - JUnit 5: test lifecycle, annotations, assertions, parameterized tests.
+    - TestNG: groups, parallel execution, data providers.
+  </Step>
+  <Step>
+    ### Mocking & Stubbing
+    - Mockito: creating mocks, stubbing methods, verifying interactions.
+    - Advanced Mockito: argument captors, spies, custom answers.
+  </Step>
+  <Step>
+    ### Framework Design Patterns
+    - POM (Page Object Model) for UI
+    - Data-driven testing → CSV/Excel, DataProvider, ParameterizedTest
+    - Reusable utilities (logging, reporting, test data mgmt)
+  </Step>
+  <Step>
+    ### Behavior-Driven Testing
+    - Cucumber BDD → Gherkin syntax, step definitions, runner setup
+    - Spock (optional, Groovy-based but integrates with Java)
+  </Step>
+  <Step>
+    ### UI & End-to-End Testing
+    - Selenium WebDriver basics → locators, actions, waits
+    - Selenium Jupiter → JUnit 5 extension, Dockerized browsers
+    - Selenide for simplified syntax
+    - Integrating with CI/CD pipelines
+  </Step>
+  <Step>
+    ### API & Integration Testing
+    - Spring Boot Test → @SpringBootTest, @WebMvcTest, @DataJpaTest
+    - MockMvc for controller tests
+    - TestContainers for real DB and infra testing
+    - REST Assured for API testing
+  </Step>
+  <Step>
+    ### Test Automation & CI/CD
+    - Maven/Gradle test lifecycle integration
+    - Running tests in CI (GitHub Actions, Jenkins)
+    - Generating reports (Allure, ExtentReports)
+    - Code coverage tools (JaCoCo, Nexus IQ, SonarQube)
+    - Dockerized Test Environments
+  </Step>
+  <Step>
+    ### Advanced Testing Topics
+    - Performance → Gatling / JMeter basics
+    - Security testing basics with OWASP ZAP
+    - Mutation Testing → LittleDarwin / PIT Mutation
+    - Property-based testing with JUnit QuickCheck
+    - Architectural testing with ArchUnit
+    - Performance testing basics with JMH
+  </Step>
+</Steps>
+
+## Summary of Popular Java Testing Frameworks
+
+| Category | Framework | Notes |
+|----------|-----------|-------|
+| **Unit Testing** | **JUnit 5** | Core testing foundation. Default choice for all Java projects. |
+| | **TestNG** | Alternative to JUnit; strong in parallel test execution. |
+| **Mocking** | **Mockito** | Works standalone; often used with JUnit. Plays nicely in Spring Boot too. |
+| | **EasyMock** | Older not widely used anymore but still independent. |
+| | **JMockit** | Can mock static/final/private; works without Spring. |
+| **Integration / System Testing** | **REST Assured** | Standalone API testing library. Spring Boot only makes setup easier. |
+| | **TestContainers** | Independent; spins up Docker containers. Useful with or without Spring. |
+| | **Spring Boot Test** | Tightly coupled to Spring 🌱. Provides annotations like `@SpringBootTest`, `@DataJpaTest`. |
+| **BDD (Behavior-Driven Dev)** | **Cucumber (Gherkin)** | Works in plain Java projects and Spring Boot. Spring just helps with DI glue. |
+| | **JBehave** | Older BDD option; independent. |
+| **Architecture / Advanced Testing** | **JUnit QuickCheck** | Property-based testing; independent. |
+| | **ArchUnit** | Tests architectural rules; independent of Spring. |
+| **UI / E2E Testing** | **Selenium / Selenide** | Fully independent; Spring doesn’t matter here. |
+
+## ✅ Best Practices
+  - Write small, independent tests
+  - Keep naming conventions clear (test methods should explain intent)
+  - Use mocks/stubs only when necessary
+  - Separate test logic from test data
+  - Automate reporting & integrate with CI early
+  - Practice TDD/BDD regularly
+  - Continuously refactor test suites
+
+## 📚 Resources
+

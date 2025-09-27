@@ -40,6 +40,7 @@ export default async function Page(props: {
           {page.data.description}
         </DocsDescription>
       </div>
+
       <DocsBody>
         <MDXContent
           components={getMDXComponents({
