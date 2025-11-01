@@ -1,0 +1,243 @@
+---
+title: C++ 101
+description: Overview of C++ programming concepts.
+---
+
+## Introduction
+- Machine independent (compiler is still needed to run), low level access to memory and system resources -> faster execution speed
+- Makes is best choice for the system level programming.
+- Object oriented programming language (unlike C) with support for procedural and functional programming paradigms.
+- Widely used in game development, system/software development, real-time systems, embedded systems, high-performance applications.
+
+## Basic Syntax
+```cpp
+#include <iostream> // Preprocessor directive to include standard input-output library  
+using namespace std; // Use the standard namespace
+int main() { // Main function - entry point of the program
+    cout << "Hello, World!" << endl; // Print "Hello, World!" to the console
+    return 0; // Return 0 to indicate successful execution
+}
+```
+- `#include <iostream>`: Preprocessor directive to include the standard input-output library.
+- `using namespace std;`: Use the standard namespace to avoid prefixing standard library names with `std::`.
+- `int main() { ... }`: Main function - entry point of the program.
+- `cout << "Hello, World!" << endl;`: Print "Hello, World!" to the console.
+- `return 0;`: Return 0 to indicate successful execution.
+
+## Variables and Data Types
+```cpp
+int age = 25; // Integer variable
+float height = 5.9; // Floating-point variable
+char grade = 'A'; // Character variable
+bool isStudent = true; // Boolean variable
+string name = "John"; // String variable
+```
+- `int`: Integer data type for whole numbers.
+- `float`: Floating-point data type for decimal numbers.
+- `char`: Character data type for single characters.
+- `bool`: Boolean data type for true/false values.
+- `string`: String data type for sequences of characters.
+
+## C++ Beyond OOPS: Deep dive into foundations
+
+### Memory model
+- C++ uses a combination of stack and heap memory.
+- Stack: Automatic memory management for local variables.
+- Heap: Manual memory management for dynamic allocation (e.g., `new` and `delete`).
+
+### Key Concepts
+
+- Memory model, stack vs heap allocation
+- RAII (Resource Acquisition Is Initialization)
+- Pointers, references, and smart pointers (unique_ptr, shared_ptr, weak_ptr)
+- Move semantics, copy elision, and Return Value Optimization (RVO)
+- Const-correctness and mutable
+- constexpr and compile-time computations
+- Type deduction (auto, decltype, trailing return types)
+- inline, static, and linkage nuances
+
+### Templates, Meta-programming, and Generics
+- Function templates and class templates for generic programming.
+- Template specialization and SFINAE (Substitution Failure Is Not An Error).
+- Variadic templates for functions and classes.
+
+Where C++ shines compared to Java’s generics.
+Function & class templates for generic programming.
+```cpp
+template <typename T>
+T add(T a, T b) {
+    return a + b; // Generic function to add two values of type T
+}
+```
+- `template <typename T>`: Template declaration for a generic type `T`.
+- `T add(T a, T b) { ... }`: Generic function to add two values of type `T`.
+- Allows code reuse for different data types without duplication.   
+- Template specialization & SFINAE
+- Variadic templates
+- Concepts (C++20)
+- Compile-time computation with constexpr functions and std::integral_constant
+- CRTP (Curiously Recurring Template Pattern)
+
+## Object-Oriented Programming (OOP) Concepts
+
+### Classes and Objects
+```cpp
+class Car {
+public:
+    string brand; // Brand of the car
+    string model; // Model of the car
+    int year; // Year of manufacture
+    void displayInfo() {
+        cout << "Car Brand: " << brand << endl;
+        cout << "Car Model: " << model << endl;
+        cout << "Year of Manufacture: " << year << endl;
+    }
+};
+int main() {
+    Car myCar; // Create an object of the Car class
+    myCar.brand = "Toyota"; // Set brand
+    myCar.model = "Corolla"; // Set model
+    myCar.year = 2020; // Set year
+    myCar.displayInfo(); // Call method to display car info
+    return 0;
+}
+```
+- `class Car { ... };`: Class definition for `Car` with attributes and methods.
+- `public:`: Access specifier to make members accessible from outside the class.
+- `void displayInfo() { ... }`: Method to display car information.
+- `Car myCar;`: Create an object of the `Car` class. 
+- `myCar.brand = "Toyota";`: Set the brand attribute of the `myCar` object.
+- `myCar.displayInfo();`: Call the method to display car information.
+
+### Inheritance
+```cpp
+class Vehicle {
+public:
+
+    void honk() {
+        cout << "Beep Beep!" << endl;
+    }
+};
+class Bike : public Vehicle {
+public:
+    void displayType() {
+        cout << "This is a bike." << endl;
+    }
+};
+int main() {
+    Bike myBike; // Create an object of the Bike class
+    myBike.honk(); // Call inherited method from Vehicle class
+    myBike.displayType(); // Call method from Bike class
+    return 0;
+}
+```
+- `class Vehicle { ... };`: Base class definition for `Vehicle`.
+- `class Bike : public Vehicle { ... };`: Derived class `Bike` that inherits from `Vehicle`.
+- `myBike.honk();`: Call the inherited method from the `Vehicle` class.
+- `myBike.displayType();`: Call the method from the `Bike` class.
+- Promotes code reuse: Share common functionality via base classes.
+- Establishes hierarchies: Model "is-a" relationships (e.g., Dog is an Animal).
+- Enables polymorphism: Treat subclasses as their parent type.
+- Facilitates extensibility: Add new features by extending existing classes.
+<Callout type="warn">
+    Use inheritance only when the relationship is truly hierarchical — otherwise, prefer composition.
+</Callout>
+When to use inheritance vs composition:
+- Use inheritance when there is a clear "is-a" relationship (e.g., Dog is an Animal) and you want to share behavior.
+- Use composition when there is a "has-a" relationship (e.g., Car has an Engine) and you want to build complex types from simpler ones, favoring flexibility over rigid hierarchies.
+
+### Polymorphism
+```cpp
+class Shape {
+public:
+    virtual void draw() { // Virtual function for polymorphism 
+        cout << "Drawing Shape" << endl;
+    }
+};
+class Circle : public Shape {
+public:
+    void draw() override { // Override the draw method
+        cout << "Drawing Circle" << endl;
+    }
+};
+class Square : public Shape {
+public:
+    void draw() override { // Override the draw method
+        cout << "Drawing Square" << endl;
+    }
+};
+int main() {
+    Shape* shape1 = new Circle(); // Create a Circle object
+    Shape* shape2 = new Square(); // Create a Square object
+    shape1->draw(); // Call draw method (Circle's version)
+    shape2->draw(); // Call draw method (Square's version)
+    delete shape1; // Free memory
+    delete shape2; // Free memory
+    return 0;
+}
+```
+- `virtual void draw() { ... }`: Virtual function in the base class to enable polymorphism.
+- `void draw() override { ... }`: Override the base class method in derived classes.
+- `Shape* shape1 = new Circle();`: Create a `Circle` object but reference it with a `Shape` pointer.
+- `shape1->draw();`: Call the overridden ` draw` method (Circle's version).
+- Unified interface: Use a common interface for different underlying forms (e.g., shapes).
+- Flexibility: Write code that works with any subclass of a base class.
+- Extensibility: Add new types without changing existing code.
+- Dynamic behavior: Method overriding allows runtime decision of which method to invoke.
+<Callout type="info">
+    Polymorphism allows methods to do different things based on the object it is acting upon, even when accessed through a common interface.
+</Callout>
+    Polymorphism allows methods to do different things based on the object it is acting upon, even when accessed through a common interface.
+```
+
+### 🧩 Composition — *Building complex types from simpler ones*
+> A Car has an Engine. The Car class contains an Engine object.
+- Promotes code reuse: Combine existing classes to create complex types.
+- Favors flexibility: Change behavior at runtime by composing different objects.
+- Avoids rigid hierarchies: No strict "is-a" relationships needed.
+- Encapsulates functionality: Each component class handles its own behavior.
+```java
+class Engine {
+    void start() { System.out.println("Engine started"); }      
+}
+class Car {
+    Engine engine = new Engine(); // Composition: Car has an Engine
+    void start() {
+        engine.start(); // Delegate start to Engine
+    }
+}
+```
+<Callout type="info">
+    Use composition to build complex types by combining simpler ones, favoring flexibility over rigid hierarchies.
+</Callout>
+
+### 🐾 Encapsulation — *Keeping data safe and sound*
+> Bundling data and methods that operate on that data within a single unit (class), restricting direct access to some of the object's components.
+- Data hiding: Protect internal state by restricting direct access.
+- Controlled access: Use getters and setters to manage how data is accessed or modified.
+- Improved maintainability: Changes to internal implementation do not affect external code.
+- Clear interface: Define a clear API for interacting with the object.
+```java
+class BankAccount {
+    private double balance; // Private variable to store balance 
+    public void deposit(double amount) {
+        if (amount > 0) this.balance += amount; // Controlled access to modify balance
+    }
+    public double getBalance() {
+        return this.balance; // Controlled access to read balance
+    }
+}
+```
+<Callout type="info">
+    Encapsulation helps maintain the integrity of an object's data by preventing unauthorized access and modification.
+</Callout> 
+When to use encapsulation:
+- Always encapsulate class data to protect it from unintended interference and misuse.
+
+### Abstraction — *Simplifying complex reality*
+> Hiding complex implementation details and exposing only the necessary parts through a simplified interface.
+- Reduces complexity: Focus on essential features without getting bogged down by details.
+- Enhances usability: Provide a clear and simple interface for users.
+- Promotes separation of concerns: Differentiate between what an object does and how it does it.
+- Facilitates maintenance: Changes to implementation do not affect users of the abstraction.
+```java

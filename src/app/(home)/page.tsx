@@ -16,12 +16,13 @@ export default function Home() {
 const Hero = () => {
   return (
     <div className="flex flex-1 flex-col justify-center items-center text-center gap-6">
-      <h1 className="max-w-3xl text-balance text-center font-semibold text-5xl leading-tighter tracking-tighter! sm:text-6xl md:max-w-4xl md:text-7xl ">
+      <h1 className="max-w-3xl text-balance text-center font-semibold text-6xl leading-tighter tracking-tighter! sm:text-6xl md:max-w-4xl md:text-7xl ">
         Welcome to Byte Notes
       </h1>
       <p className="max-w-xl text-balance text-center text-muted-foreground md:max-w-2xl md:text-lg lg:text-xl leading-snug">
-        Hi there! Im Vidyak, a full stack developer and machine learning enthusiast. 
-        This is my personal knowledge base, where I share my curated collection of resources, research notes, and insights on, well, you see for yourself.
+        Hi there! Im Vidyak, Java Full Stack Developer. These days there is no specific role, especially with AI. People need to learn how to learn faster and apply it effectively. 
+        Although, there are ample amount of resources available online, I found it difficult fill in the gaps and connect the dots. somethings felt missing despite the robust collection out there, this blog does exactly that. 
+        A personal knowledge base, where I share my curated collection of resources, research notes, and insights on, well, you see for yourself.
       </p>
 
       <div className="flex gap-4">

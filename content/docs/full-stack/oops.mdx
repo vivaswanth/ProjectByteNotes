@@ -34,21 +34,54 @@ order: 1
 
 Thats exactly what abstraction is about.
 - Reduces cognitive overload: Manage complexity by hiding irrelevant details.
-- Behaviour over implementation: Focus on *what* an object does, not *how* it does it.
-- Encourages loose coupling: Accomodate changes without affecting others.
+- Behavior over implementation: Focus on *what* an object does, not *how* it does it.
+- Encourages loose coupling: Accommodate changes without affecting others.
 - Design by contract: Design contracts / interfaces for multiple systems to interact.
 
-```java
-interface PaymentProcessor {
-    void processPayment(double amount);
-}
+<Tabs items={["java", "c++", "python"]}>
+    <Tab value="java">
+        ```java
+        interface PaymentProcessor {
+            void processPayment(double amount);
+        }
 
-class StripeProcessor implements PaymentProcessor {
-    public void processPayment(double amount) {
-        // Stripe-specific logic
-    }
-}
-```
+        class StripeProcessor implements PaymentProcessor {
+            public void processPayment(double amount) {
+                // Stripe-specific logic
+            }
+        }
+        ```
+    </Tab>
+    <Tab value="c++">
+        ```c++
+        class PaymentProcessor {
+        public:
+            virtual void processPayment(double amount) = 0; // Pure virtual function
+        };
+
+        class StripeProcessor : public PaymentProcessor {
+        public:
+            void processPayment(double amount) override {
+                // Stripe-specific logic
+            }
+        };
+        ```
+    </Tab>
+    <Tab value="Python">
+        ```python
+        from abc import ABC, abstractMethod
+        
+        class PaymentProcessor(ABC):
+            @abstractMethod
+            def process_payment(self, amount):
+                pass
+        class StripeProcessor(PaymentProcessor):
+            def process_payment(self, amount):
+                # Stripe-specific logic
+                pass
+        ```
+    </Tab>
+</Tabs>
 
 ### 🔒 Encapsulation — *Protect the integrity of your data*
 
