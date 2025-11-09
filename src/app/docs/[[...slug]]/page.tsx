@@ -10,6 +10,8 @@ import { createMetadata } from "@/lib/metadata";
 import { source } from "@/lib/source";
 import { getMDXComponents } from "@/mdx-components";
 import { FolderCards } from "@/components/folder-cards";
+import ReadingTime from "@/components/reading-time";
+import { CalendarDays, Clock } from "lucide-react";
 
 export default async function Page(props: {
   params: Promise<{ slug?: string[] }>;
@@ -35,10 +37,30 @@ export default async function Page(props: {
       tableOfContent={{ style: "clerk" }}
     >
       <div className="flex flex-col gap-2">
-        <DocsTitle>{page.data.title}</DocsTitle>
-        <DocsDescription className="mb-4">
+        <DocsTitle className="leading-tight tracking-tight">
+          {page.data.title}
+        </DocsTitle>
+
+        <DocsDescription className="text-lg text-muted-foreground/90 max-w-3xl leading-relaxed !mb-0">
           {page.data.description}
         </DocsDescription>
+
+        {/* Stripe-style metadata line */}
+        <div className="stripe-meta mt-2 pl-3 border-l-[2.5px] border-pink-400/80 flex items-center gap-2 text-sm text-muted-foreground/90 font-medium">
+          <span className="flex items-center gap-1">
+            <CalendarDays className="w-4 h-4" /> {new Date(page.data.lastModified).toLocaleDateString("en-US", {
+              month: "short",
+              day: "numeric",
+              year: "numeric",
+            })}
+          </span>
+          <span>·</span>
+          <span className="flex items-center gap-1">
+            <Clock className="w-4 h-4" /> <ReadingTime selector="main" />
+          </span>
+        </div>
+
+        <hr className="my-2" />
       </div>
 
       <DocsBody>

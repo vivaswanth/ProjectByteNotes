@@ -14,12 +14,8 @@ export const baseOptions: BaseLayoutProps = {
   githubUrl: GITHUB_URL,
   links: [
     {
-      text: "Home",
-      url: "/",
-    },
-    {
       text: "Articles",
-      url: "/docs/full-stack",
+      url: "/docs/cs-101",
       active: "nested-url",
     },
   ],

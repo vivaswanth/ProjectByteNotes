@@ -5,7 +5,8 @@ import { source } from "@/lib/source";
 
 export default function Layout({ children }: { children: ReactNode }) {
   return (
-    <DocsLayout
+    <div className="home">
+      <DocsLayout
       {...baseOptions}
       tree={source.pageTree}
       sidebar={{ hidden: true, collapsible: false }}
@@ -13,5 +14,7 @@ export default function Layout({ children }: { children: ReactNode }) {
     >
       {children}
     </DocsLayout>
+    </div>
+    
   );
 }

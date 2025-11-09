@@ -1,7 +1,8 @@
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, LinkedinIcon, Linkedin } from "lucide-react";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 import { buttonVariants } from "@/components/ui/button";
-import { GITHUB_URL, TURBOSTARTER_URL } from "@/lib/constants";
+import { GITHUB_URL, TURBOSTARTER_URL, FUMADOCS_URL } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
 export default function Home() {
@@ -15,41 +16,39 @@ export default function Home() {
 
 const Hero = () => {
   return (
-    <div className="flex flex-1 flex-col justify-center items-center text-center gap-6">
-      <h1 className="max-w-3xl text-balance text-center font-semibold text-6xl leading-tighter tracking-tighter! sm:text-6xl md:max-w-4xl md:text-7xl ">
-        Welcome to Byte Notes
+
+    <div className="flex flex-1 flex-col justify-center items-center text-center gap-2 relative p-6">
+      <h1 className="max-w-6xl text-balance font-semibold text-6xl leading-tighter tracking-tighter! sm:text-6xl md:max-w-4xl md:text-7xl ">
+        <span className="font-semibold text-5xl md:text-6xl leading-tight text-left">
+          Welcome to{" "}
+          <span className="bg-gradient-to-r from-orange-500 to-purple-600 bg-clip-text text-transparent">
+            Byte Notes 
+          </span>
+        </span>
       </h1>
-      <p className="max-w-xl text-balance text-center text-muted-foreground md:max-w-2xl md:text-lg lg:text-xl leading-snug">
-        Hi there! Im Vidyak, Java Full Stack Developer. These days there is no specific role, especially with AI. People need to learn how to learn faster and apply it effectively. 
-        Although, there are ample amount of resources available online, I found it difficult fill in the gaps and connect the dots. somethings felt missing despite the robust collection out there, this blog does exactly that. 
-        A personal knowledge base, where I share my curated collection of resources, research notes, and insights on, well, you see for yourself.
+
+      <p className="max-w-xl text-balance text-center md:max-w-3xl md:text-lg lg:text-xl leading-snug">
+        Hi, I’m Vidya — a Senior Java Full Stack Developer with nearly a decade of experience designing and building scalable web applications and Agentic AI-driven solutions to deliver impactful user experiences and accelerate business outcomes.
       </p>
 
-      <div className="flex gap-4">
+      <p className="max-w-xl text-balance text-center text-muted-foreground md:max-w-2xl leading-relaxed">
+        My work primarily involves developing complex business and financial platforms using Java, Spring Boot, Angular, and React. 
+        Alongside my professional projects, I pursued a master’s in Data Science, where I gained hands-on experience in deep learning and neural network–based anomaly detection using Python.
+      </p>
+      
+      <div className="flex gap-4 mt-4">
         <Link
-          href={GITHUB_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={cn(
-            buttonVariants({ variant: "default", size: "lg" }),
-            "has-[>svg]:px-6",
-          )}
-        >
-          <svg
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-            className="fill-background"
-          >
-            <title>GitHub</title>
-            <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" />
-          </svg>
-          Github
+          href="/docs/cs-101"
+          className={buttonVariants({ variant: "default", size: "lg" })}>
+          <ArrowUpRight className="size-4" />
+          Explore Articles
         </Link>
         <Link
-          href="/docs/getting-started"
-          className={buttonVariants({ variant: "outline", size: "lg" })}
-        >
-          Documentation
+          href="https://www.linkedin.com/in/vidya-vivaswanth/"
+          target="new"
+          className={buttonVariants({ variant: "outline", size: "lg" })}>
+          <Linkedin className="size-4" />
+          Connect with me
         </Link>
       </div>
     </div>
@@ -61,6 +60,14 @@ const Footer = () => {
     <footer className="py-4 md:py-6 text-center border-t border-dotted">
       <p className="text-muted-foreground text-sm">
         Made with ❤️ and{" "}
+        <a
+          href={FUMADOCS_URL}
+          target="_blank"
+          rel="noreferrer"
+          className="text-primary underline"
+        >
+          FumaDocs
+        </a>{", "} powered by{" "}
         <a
           href={TURBOSTARTER_URL}
           target="_blank"
