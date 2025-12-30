@@ -13,31 +13,35 @@ import { z } from "zod/v3";
 export const docs = defineDocs({
   docs: {
     schema: frontmatterSchema.extend({
+      title: z.string(),
+      description: z.string().optional(),
       showFolderCards: z.boolean().default(false),
-      order: z.number().optional()
-    }) as any,
+      showFolderCardsRoot: z.boolean().default(false),
+      order: z.number().optional(),
+    }),
   },
   meta: {
     schema: metaSchema.extend({
-      // other props
+      title: z.string(),
+      description: z.string().optional(),
     }),
   },
 });
 
-// ✅ NEW: a second, isolated docs collection for `_shorts`
 export const shorts = defineDocs({
-  dir: "content/shorts", //
+  dir: "content/shorts",
   docs: {
-    // extend or leave as-is; minimal is fine
     schema: frontmatterSchema.extend({
-      // add any per-note fields if you like
-      category: z.string().optional()
-    }) as any,
-  },
-  meta: {
-    schema: metaSchema.extend({}),
+      title: z.string(),
+      category: z.string().optional(),
+      jsCode: z.string().optional(),
+      cppCode: z.string().optional(),
+      javaCode: z.string().optional(),
+      pythonCode: z.string().optional(),
+    }),
   },
 });
+
 
 export default defineConfig({
   lastModifiedTime: "git",

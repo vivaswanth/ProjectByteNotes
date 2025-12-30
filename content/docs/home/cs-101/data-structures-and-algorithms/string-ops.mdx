@@ -1,0 +1,635 @@
+---
+title: String Operations
+description: Everything that a string is involved
+order: 2
+---
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { CheckCircle2Icon } from 'lucide-react';
+
+### How strings are stored ?
+- A string = Sequence of characters (Char Array / Byte Array) + Encoding (ASCII, UTF-8, UTF-16, etc.) + Termination rule (or length property - \0).
+```text title="Visual Comparison of String interpretations"
+                   ┌─────────────────────────────────────────┬───────────────────────────────────────────┐
+                   │             C / C++ STRING              │             JAVA / PYTHON STRING          │
+                   ├──────────────────────┬──────────────────┼──────────────────────┬────────────────────┤
+Memory Layout      │ H  E  L  L  O  \0    │ Null-Terminated  │ [length=5] H E L L O │ Length-Prefixed    │
+                   │ `char[]` + `'\0'`    │ ('\0 marker' )   │ `char[]` / `byte[]`  │ (no '\0' marker)   │
+                   ├──────────────────────┼──────────────────┼──────────────────────┼────────────────────┤
+Ending Rule        │ Ends when `\0` found │ Must scan buffer │ Ends using stored len│ No scanning needed │
+                   ├──────────────────────┼──────────────────┼──────────────────────┼────────────────────┤
+Mutability         │ Mutable (char array) │ In-place update  │ Immutable object     │ New string on edit │
+                   ├──────────────────────┼──────────────────┼──────────────────────┼────────────────────┤
+Modification Cost  │ O(1) char overwrite  │ Fast if capacity │ O(n) per change      │ Allocates new mem  │
+                   ├──────────────────────┼──────────────────┼──────────────────────┼────────────────────┤
+Encoding           │ ASCII / UTF-8 (manual│ Depends on build │ UTF-16 (Java)        │ UTF-8 / Unicode    │
+                   │ or system locale)    │                  │ Unicode (Python 3)   │ Flexible/automatic │
+                   ├──────────────────────┴──────────────────┼──────────────────────┴────────────────────┤
+Notes              │ Manual memory safety required           │ Safe & GC-managed but slower for edits    │
+                   └─────────────────────────────────────────┴───────────────────────────────────────────┘
+```
+
+```text title="Mutability Big(O) comparison"
+| Operation               | Immutable | Mutable        |
+| ----------------------- | --------- | -------------- |
+| Reading char at index   | O(1)      | O(1)           |
+| Copying string          | O(n)      | O(n)           |
+| Appending one char      | O(n)      | O(1) amortized |
+| Concatenating N strings | O(N²)     | O(N)           |
+```
+
+<Callout type="warn" title="Immutability">
+	- Java, Javascript and Python strings are **Immutable** unlike C.  
+	- Any modification produces a **new string object**.
+		
+	<Tabs items={["java", "javascript", "python"]}>
+		<Tab value="java">
+			```java
+				// The O(N²) Trap (Using Immutable Strings)  
+				String s = "";
+				for (int i = 0; i < 100000; i++) {
+						s = s + "a";  
+				}
+			```
+		</Tab>
+		<Tab value="javascript">
+			```javascript
+				// Slow historically but sometimes engine optimized
+				let s = "";
+				for (let i = 0; i < 100000; i++) {
+					s = s + "a";
+				}
+			```
+		</Tab>
+		<Tab value="python">
+			```python
+				s = ""
+				for i in range(100000):
+    			s += "a"
+			```
+		</Tab>
+	</Tabs>
+	❗ What happens internally?
+		- Each s = s + "a" creates a brand new string: Old string s copied → O(n)
+			- S += "x" is O(n), not O(1)
+			- So the cost becomes: 1 + 2 + 3 + ... + n  =  O(n²)
+			- Appending 1 lakh chars may take seconds instead of milliseconds
+</Callout>
+
+<Callout type="info" title="Performance tip">
+	- Avoid heavy concatenations → use:
+		- StringBuilder (Java)
+		- StringBuffer if thread-safe (Java)
+		- .join() in Python
+		
+	<Tabs items={["java", "javascript", "python"]}>
+		<Tab value="java">
+			```java
+				// Correct way using StringBuilder O(N)
+				StringBuilder sb = new StringBuilder();
+				for (int i = 0; i < 100000; i++) {
+						sb.append("a");  
+				}
+				String s = sb.toString();  // convert back to string
+			```
+		</Tab>
+		<Tab value="javascript">
+			```javascript
+				let arr = [];
+				for (let i = 0; i < 100000; i++) {
+					arr.push("a");
+				}
+				let s = arr.join("");
+			```
+		</Tab>
+		<Tab value="python">
+			```python
+				arr = []
+				for i in range(100000):
+    			arr.append("a")
+
+				s = "".join(arr)
+			```
+		</Tab>
+	</Tabs>
+	- Why this is fast?
+		- StringBuilder is mutable → it grows without copying entire string every time
+		- Internal buffer expands by ~2x when needed
+		- Because expansion happens infrequently, average append cost ≈ O(1)
+		- Total complexity ≈ O(N)
+</Callout>
+
+> Rule of thumb:
+👉 If you modify strings inside a loop, always use a builder.
+
+### Built-in methods cheat-sheet
+- Some built-in string and character functions
+
+| **Category**            | **Java**                         | **C++**                       | **Python**             | **JavaScript**                      |
+| ----------------------- | -------------------------------- | ----------------------------- | ---------------------- | ----------------------------------- |
+| **CHAR CHECKS**         |                                  |                               |                        |                                     |
+| Digit?                  | `Character.isDigit(c)`           | `isdigit(c)`                  | `c.isdigit()`          | `/\d/.test(c)`                      |
+| Alphabet?               | `Character.isAlphabetic(c)`      | `isalpha(c)`                  | `c.isalpha()`          | `/[a-zA-Z]/.test(c)`                |
+| Alphanumeric?           | `Character.isLetterOrDigit(c)`   | `isalnum(c)`                  | `c.isalnum()`          | `/[a-zA-Z0-9]/.test(c)`             |
+| Uppercase?              | `Character.isUpperCase(c)`       | `isupper(c)`                  | `c.isupper()`          | `/[A-Z]/.test(c)`                   |
+| Lowercase?              | `Character.isLowerCase(c)`       | `islower(c)`                  | `c.islower()`          | `/[a-z]/.test(c)`                   |
+| Whitespace?             | `Character.isWhitespace(c)`      | `isspace(c)`                  | `c.isspace()`          | `/\s/.test(c)`                      |
+| **CHAR TRANSFORM**      |                                  |                               |                        |                                     |
+| To uppercase            | `Character.toUpperCase(c)`       | `toupper(c)`                  | `c.upper()`            | `c.toUpperCase()`                   |
+| To lowercase            | `Character.toLowerCase(c)`       | `tolower(c)`                  | `c.lower()`            | `c.toLowerCase()`                   |
+| **STRING CHECKS**       |                                  |                               |                        |                                     |
+| Length                  | `s.length()`                     | `s.length()`                  | `len(s)`               | `s.length`                          |
+| Empty?                  | `s.isEmpty()`                    | `s.empty()`                   | `len(s)==0`            | `s.length===0`                      |
+| Contains                | `s.contains(t)`                  | `s.find(t)!=npos`             | `t in s`               | `s.includes(t)`                     |
+| Equals                  | `s.equals(t)`                    | `s == t`                      | `s == t`               | `s === t`                           |
+| Starts with             | `s.startsWith(t)`                | `s.rfind(t,0)==0`             | `s.startswith(t)`      | `s.startsWith(t)`                   |
+| Ends with               | `s.endsWith(t)`                  | custom                        | `s.endswith(t)`        | `s.endsWith(t)`                     |
+| Ignore-case equals      | `s.equalsIgnoreCase(t)`          | custom                        | `s.lower()==t.lower()` | `s.toLowerCase()==t.toLowerCase()`  |
+| **INDEX / SEARCH**      |                                  |                               |                        |                                     |
+| Char at index           | `s.charAt(i)`                    | `s[i]`                        | `s[i]`                 | `s[i]`                              |
+| First occurrence        | `s.indexOf(t)`                   | `s.find(t)`                   | `s.find(t)`            | `s.indexOf(t)`                      |
+| Last occurrence         | `s.lastIndexOf(t)`               | `s.rfind(t)`                  | `s.rfind(t)`           | `s.lastIndexOf(t)`                  |
+| **SUBSTRING / SLICE**   |                                  |                               |                        |                                     |
+| Substring               | `s.substring(a,b)`               | `s.substr(a,b)`               | `s[a:b]`               | `s.substring(a,b)` / `s.slice(a,b)` |
+| Substring to end        | `s.substring(a)`                 | `s.substr(a)`                 | `s[a:]`                | `s.slice(a)`                        |
+| Negative indexing       | ❌                                | ❌                             | ✔                      | ✔ (`s.slice(-k)`)                   |
+| **CASE CONVERSION**     |                                  |                               |                        |                                     |
+| Uppercase               | `s.toUpperCase()`                | transform                     | `s.upper()`            | `s.toUpperCase()`                   |
+| Lowercase               | `s.toLowerCase()`                | transform                     | `s.lower()`            | `s.toLowerCase()`                   |
+| Capitalize              | custom                           | custom                        | `s.capitalize()`       | custom                              |
+| **TRIM / WHITESPACE**   |                                  |                               |                        |                                     |
+| Trim both               | `s.trim()` / `s.strip()`         | custom                        | `s.strip()`            | `s.trim()`                          |
+| Trim left               | `s.stripLeading()`               | custom                        | `s.lstrip()`           | `s.trimStart()`                     |
+| Trim right              | `s.stripTrailing()`              | custom                        | `s.rstrip()`           | `s.trimEnd()`                       |
+| **SPLIT & JOIN**        |                                  |                               |                        |                                     |
+| Split                   | `s.split(" ")`                   | `stringstream`                | `s.split(" ")`         | `s.split(" ")`                      |
+| Join                    | `String.join("-", arr)`          | custom                        | `"-".join(arr)`        | `arr.join("-")`                     |
+| **REPLACE**             |                                  |                               |                        |                                     |
+| Replace char            | `s.replace('a','b')`             | `s[i]='b'`*                   | `s.replace('a','b')`   | `s.replace("a","b")`                |
+| Replace substring       | `s.replace("ab","cd")`           | `s.replace(pos,len,"cd")`     | `s.replace("ab","cd")` | `s.replace("ab","cd")`              |
+| Replace all             | `s.replaceAll(regex, r)`         | custom                        | regex                  | `s.replaceAll("ab","cd")`           |
+| **REVERSAL**            |                                  |                               |                        |                                     |
+| Reverse string          | `new StringBuilder(s).reverse()` | `reverse(s.begin(), s.end())` | `s[::-1]`              | `s.split("").reverse().join("")`    |
+| **NUMERIC CONVERSIONS** |                                  |                               |                        |                                     |
+| To integer              | `Integer.parseInt(s)`            | `stoi(s)`                     | `int(s)`               | `parseInt(s)`                       |
+| To long                 | `Long.parseLong(s)`              | `stoll(s)`                    | `int(s)`               | `Number(s)`                         |
+| To string               | `String.valueOf(x)`              | `to_string(x)`                | `str(x)`               | `String(x)`                         |
+| Binary parse            | `Integer.parseInt(s,2)`          | `stoi(s,0,2)`                 | `int(s,2)`             | `parseInt(s,2)`                     |
+| Hex parse               | `Integer.parseInt(s,16)`         | `stoi(s,0,16)`                | `int(s,16)`            | `parseInt(s,16)`                    |
+| **BUILDERS**            |                                  |                               |                        |                                     |
+| Efficient builder       | `StringBuilder`                  | `std::string` (mutable)       | list + `"".join()`     | array + `.join()`                   |
+| Append                  | `sb.append(x)`                   | `s += x` / `push_back`        | `arr.append(x)`        | `arr.push(x)`                       |
+
+### Two pointers concept
+- Two pointers → using two indices that move over a string (or array) to process it efficiently.
+- Typical patterns:
+	- One from left, one from right (palindromes, reversals)
+	- Both moving forward at different speeds (slow/fast)
+	- Both moving forward in different roles (read/write pointer, compression, skipping chars)
+
+<Callout type="info" title="Why we need it ?">
+	- Avoid extra memory (do work in-place)
+	- Reduce complexity from O(n²) to O(n) in many string problems
+	- Foundation for sliding window and two-pointer substring problems
+</Callout>
+
+```text title="Palindrome illustration"
+	s = "racecar"
+	i -> r a c e c a r <- j
+
+	Compare s[i] and s[j], move inward:
+	(r,r) (a,a) (c,c) (e,e) -> palindrome
+```
+
+<Tabs items={["java", "cpp", "javascript", "python"]}>
+	<Tab value="java">
+		```java
+			boolean isPalindrome(String s) {
+				int i = 0, j = s.length() - 1;
+				while (i < j) {
+					if (s.charAt(i) != s.charAt(j)) return false;
+					i++; j--;
+				}
+				return true;
+			}
+		```
+	</Tab>
+	<Tab value="cpp">
+		```java
+			bool isPalindrome(const std::string& s) {
+				int i = 0, j = (int)s.size() - 1;
+				while (i < j) {
+					if (s[i] != s[j]) return false;
+					++i; --j;
+				}
+				return true;
+			}			
+		```
+	</Tab>
+	<Tab value="javascript">
+		```javascript
+			function isPalindrome(s) {
+				let i = 0, j = s.length - 1;
+				while (i < j) {
+					if (s[i] !== s[j]) return false;
+					i++; j--;
+				}
+				return true;
+			}
+		```
+	</Tab>
+	<Tab value="python">
+		```python
+			def is_palindrome(s: str) -> bool:
+				i, j = 0, len(s) - 1
+				while i < j:
+						if s[i] != s[j]:
+								return False
+						i += 1
+						j -= 1
+				return True
+		```
+	</Tab>
+</Tabs>
+
+### Frequency Arrays
+- Frequency array → a compact way to count how many times each character appears.
+- Typical use case: for lowercase / uppercase english letters:
+	- For ASCII → freq[256]
+	- For Unicode → map / dictionary
+
+<Callout type="info" title="Why we need it ?">
+	- Anagram checks.
+	- Palindrome possibility check (odd/even counts)
+	- Sliding window with character constraints
+	- Counting frequency-based metrics (most frequent char, etc.)
+</Callout>
+
+<Tabs items={["java", "cpp", "javascript", "python"]}>
+	<Tab value="java">
+		```java
+			int[] freq = new int[26];
+			for (int i = 0; i < s.length(); i++) {
+				char c = s.charAt(i);
+				if (c >= 'a' && c <= 'z') {
+					freq[c - 'a']++;
+				}
+			}
+		```
+	</Tab>
+	<Tab value="cpp">
+		```java
+			#include <vector>
+			std::vector<int> freq(26, 0);
+			for (char c : s) {
+				if (c >= 'a' && c <= 'z') {
+					freq[c - 'a']++;
+				}
+			}
+		```
+	</Tab>
+	<Tab value="javascript">
+		```javascript
+			let freq = new Array(26).fill(0);
+			for (let ch of s) {
+				if (ch >= 'a' && ch <= 'z') {
+					freq[ch.charCodeAt(0) - 'a'.charCodeAt(0)]++;
+				}
+			}
+		```
+	</Tab>
+	<Tab value="python">
+		```python
+			freq = [0] * 26
+			for c in s:
+				if 'a' <= c <= 'z':
+					freq[ord(c) - ord('a')] += 1
+		```
+	</Tab>
+</Tabs>
+
+### Sliding window
+- Sliding window → a contiguous segment of the string that we expand and/or shrink as we traverse.
+- Two forms:
+	- Fixed-size window e.g., substring of length k
+	- Variable-size window e.g., “longest substring with ≤ K distinct chars”
+
+<Callout type="info" title="Why we need it ?">
+	- Efficient substring processing (O(n) instead of O(nk)).
+	- Core pattern for:
+		- longest substring / subarray problems
+		- minimum window problems
+		- count of substrings with property X
+</Callout>
+
+```text title="Sliding window of size 3 illustration"
+	s = [1, 2, 3, 4, 5]
+	[1, 2, 3]      	window 0–2
+		[2, 3, 4]   	window 1–3
+				[3, 4, 5]	window 2–4
+```
+<Tabs items={["java", "cpp", "javascript", "python"]}>
+	<Tab value="java">
+		```java
+			int maxSumFixedWindow(int[] arr, int k) {
+					int n = arr.length;
+					if (n < k) return 0;
+					int windowSum = 0;
+					for (int i = 0; i < k; i++) windowSum += arr[i];
+					int maxSum = windowSum;
+					for (int i = k; i < n; i++) {
+							windowSum += arr[i] - arr[i - k];
+							maxSum = Math.max(maxSum, windowSum);
+					}
+					return maxSum;
+			}
+		```
+	</Tab>
+	<Tab value="cpp">
+		```java
+			int maxSumFixedWindow(const std::vector<int>& arr, int k) {
+					int n = (int)arr.size();
+					if (n < k) return 0;
+					int windowSum = 0;
+					for (int i = 0; i < k; ++i) windowSum += arr[i];
+					int maxSum = windowSum;
+					for (int i = k; i < n; ++i) {
+							windowSum += arr[i] - arr[i - k];
+							maxSum = std::max(maxSum, windowSum);
+					}
+					return maxSum;
+			}
+		```
+	</Tab>
+	<Tab value="javascript">
+		```javascript
+			function maxSumFixedWindow(arr, k) {
+				if (arr.length < k) return 0;
+				let windowSum = 0;
+				for (let i = 0; i < k; i++) windowSum += arr[i];
+				let maxSum = windowSum;
+				for (let i = k; i < arr.length; i++) {
+					windowSum += arr[i] - arr[i - k];
+					maxSum = Math.max(maxSum, windowSum);
+				}
+				return maxSum;
+			}
+		```
+	</Tab>
+	<Tab value="python">
+		```python
+			def max_sum_fixed_window(arr, k: int) -> int:
+				n = len(arr)
+				if n < k:
+						return 0
+				window_sum = sum(arr[:k])
+				max_sum = window_sum
+				for i in range(k, n):
+						window_sum += arr[i] - arr[i - k]
+						max_sum = max(max_sum, window_sum)
+				return max_sum
+		```
+	</Tab>
+</Tabs>
+
+> For strings, the same pattern applies — just replace arr[i] with s.charAt(i) or s[i], and windowSum with whatever metric you track (frequency, count, etc.)
+
+### Alphanumeric checks
+
+```text title="Checking for digits using ASCII"
+	bool containsDigit(string s) {
+		for (int i = 0; i < s.length(); i++) {
+			char c = s[i];
+			if (c >= '0' && c <= '9') return true;
+		}
+		return false;
+	}
+
+	bool isAllLetters(string s) {
+		if (s.length() == 0) return false; // optional
+		for (int i = 0; i < s.length(); i++) {
+			char c = s[i];
+			bool upper = (c >= 'A' && c <= 'Z');
+			bool lower = (c >= 'a' && c <= 'z');
+			if (!upper && !lower) return false;
+		}
+		return true;
+	}
+
+```
+
+### Reverse a string
+
+```text title="Reversing in-place using 2 pointers, one from front, other from last"
+	void reverseString(vector<char>& s) {
+		int i = 0, j = s.size() - 1;
+		while (i < j) {
+			char temp = s[i];
+			s[i] = s[j];
+			s[j] = temp;
+			i++;
+			j--;
+		}
+	}
+```
+
+### Case conversions
+
+```text title="Convert lower case, upper case using ASCII difference"
+  string toLowerManual(string s) {
+    for (int i = 0; i < s.length(); i++) {
+        char c = s[i];
+        if (c >= 'A' && c <= 'Z') {
+            s[i] = c + ('a' - 'A'); // or + 32
+        }
+    }
+    return s;
+  }
+
+  string toUpperManual(string s) {
+    for (int i = 0; i < s.length(); i++) {
+        char c = s[i];
+        if (c >= 'a' && c <= 'z') {
+            s[i] = c - ('a' - 'A'); // or - 32
+        }
+    }
+    return s;
+  }
+```
+
+### Decimal conversions
+
+```text title="Convert string to decimal number (integer / long)"
+
+  // core idea
+  - Treat string like base-10 number: e.g: For "24000"
+  - Start result = 0
+  - Read left-to-right:
+    - '2' → 2 → result = 0*10 + 2 = 2
+    - '4' → 4 → result = 2*10 + 4 = 24
+    - '0' → 0 → result = 24*10 + 0 = 240
+    - … and so on.
+
+  long toInteger(string s) {
+    int i = 0;
+    long result = 0;
+    int sign = 1;
+
+    if (s[0] == '-') {
+        sign = -1;
+        i = 1;
+    }
+
+    for (; i < s.length(); i++) {
+        char c = s[i];
+        if (c < '0' || c > '9') {
+            // handle error or break
+            break;
+        }
+        int digit = c - '0';
+        result = result * 10 + digit;
+        // optionally check overflow here
+    }
+
+    return sign * result;
+  }
+
+```
+
+```text title="Convert decimal number to string"
+
+  // core idea
+  - Take remainder by 10 → last digit.
+  - Convert digit to char: '0' + digit.
+  - Append to temp buffer (this produces reversed string).
+  - Reverse at the end.
+
+  string intToString(long num) {
+    if (num == 0) return "0";
+
+    bool negative = num < 0;
+    if (negative) num = -num;
+
+    string res;
+    while (num > 0) {
+        int digit = num % 10;
+        res.push_back('0' + digit);
+        num /= 10;
+    }
+
+    if (negative) res.push_back('-');
+
+    reverse(res.begin(), res.end());
+    return res;
+  }
+
+```
+
+### Roman conversions
+
+```text title="Convert integer number to roman"
+
+  // core idea
+  - Roman numbers I=1 V=5 X=10 L=50 C=100 D=500 M=1000
+  - use greedy approach: always subtract the largest possible Roman chunk from the number.
+  
+  string intToRoman(int num) {
+    int values[] =  {1000,900,500,400,100,90,50,40,10,9,5,4,1};
+    string symbols[] = {"M","CM","D","CD","C","XC","L","XL","X","IX","V","IV","I"};
+
+    string res;
+    for (int i = 0; i < 13; i++) {
+        while (num >= values[i]) {
+            res += symbols[i];
+            num -= values[i];
+        }
+    }
+    return res;
+  }
+
+```
+
+```text title="Convert roman number to integer"
+
+  // core idea
+  - Roman numbers I=1 V=5 X=10 L=50 C=100 D=500 M=1000
+  - Scan left→right. If current symbol is less than the next one, subtract it; otherwise, add it.
+
+  "XIV" → 14
+    X (10) < I (1) ? no → +10
+    I (1) < V (5) ? yes → -1
+    V (5) → +5
+  Total = 14
+
+  function romanToInt(s):
+    value = map of:
+      'I' -> 1
+      'V' -> 5
+      'X' -> 10
+      'L' -> 50
+      'C' -> 100
+      'D' -> 500
+      'M' -> 1000
+
+    total = 0
+    i = 0
+
+    while i < length(s):
+      curr = value[ s[i] ]
+
+      if i + 1 < length(s):
+          next = value[ s[i + 1] ]
+      else:
+          next = 0
+
+      if curr < next:
+          total = total - curr
+      else:
+          total = total + curr
+      i = i + 1
+    return total
+
+```
+
+### Binary conversions
+
+```text title="Convert binary number to integer"
+
+  // core idea
+  - Iterate left→right. For each bit: result = result * 2 + bit
+  
+  function binaryToInt(binaryString):
+    result = 0
+
+    for i from 0 to length(binaryString)-1:
+      c = binaryString[i]
+
+      if c is not '0' and c is not '1':
+          error "invalid binary digit"
+
+      bit = c - '0'    // '0' -> 0, '1' -> 1
+
+      result = result * 2 + bit
+    return result
+
+```
+
+```text title="Convert integer number to binary string"
+
+  // core idea
+  - Repeated division by 2, collect remainders (bits), then reverse.
+  
+  function binaryToInt(binaryString):
+    result = 0
+
+    for i from 0 to length(binaryString)-1:
+      c = binaryString[i]
+
+      if c is not '0' and c is not '1':
+          error "invalid binary digit"
+
+      bit = c - '0'    // '0' -> 0, '1' -> 1
+
+      result = result * 2 + bit
+    return result
+
+```

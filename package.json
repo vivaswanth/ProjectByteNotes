@@ -41,7 +41,13 @@
     "react-dom": "^19.0.0",
     "tailwind-merge": "^3.3.0",
     "twoslash": "^0.3.1",
-    "zod": "^4.0.17"
+    "zod": "^4.0.17",
+    "@codemirror/lang-cpp": "^6.0.3",
+    "@codemirror/lang-java": "^6.0.2",
+    "@codemirror/lang-javascript": "^6.2.4",
+    "@codemirror/lang-python": "^6.2.1",
+    "@radix-ui/react-tabs": "^1.1.13",
+    "@uiw/react-codemirror": "^4.25.3"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.8",

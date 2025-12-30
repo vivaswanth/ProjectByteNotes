@@ -10,6 +10,7 @@ import { createMetadata } from "@/lib/metadata";
 import { source } from "@/lib/source";
 import { getMDXComponents } from "@/mdx-components";
 import { FolderCards } from "@/components/folder-cards";
+import { FolderCardsRoot } from "@/components/folder-cards-root";
 import ReadingTime from "@/components/reading-time";
 import { CalendarDays, Clock } from "lucide-react";
 
@@ -22,40 +23,43 @@ export default async function Page(props: {
   if (!page) notFound();
 
   const MDXContent = page.data.body;
-
-  const folderSlug = [...(params.slug || [])];
-  if (folderSlug[folderSlug.length - 1] === "index") {
-    folderSlug.pop(); // remove 'index' if it's present
-  }
-
   const showCards = page.data?.showFolderCards === true;
+  const showCardsRoot = page.data?.showFolderCardsRoot === true;
+  const folderSlug =
+  showCards 
+    ? page.slugs
+    : page.slugs.slice(0, -1);
+  const folderSlugRoot =
+  showCardsRoot
+    ? page.slugs
+    : page.slugs.slice(0, -1);
 
   return (
     <DocsPage
       toc={page.data.toc}
       full={page.data.full}
-      tableOfContent={{ style: "clerk" }}
+      tableOfContent={{ style: "" }}
     >
       <div className="flex flex-col gap-2">
-        <DocsTitle className="leading-tight tracking-tight">
+        <DocsTitle className="leading-tight tracking-tight text-pink-500">
           {page.data.title}
         </DocsTitle>
 
-        <DocsDescription className="text-lg text-muted-foreground/90 max-w-3xl leading-relaxed !mb-0">
+        <DocsDescription className="text-lg text-black-900 max-w-3xl leading-relaxed !mb-0">
           {page.data.description}
         </DocsDescription>
 
         {/* Stripe-style metadata line */}
         <div className="stripe-meta mt-2 pl-3 border-l-[2.5px] border-pink-400/80 flex items-center gap-2 text-sm text-muted-foreground/90 font-medium">
           <span className="flex items-center gap-1">
-            <CalendarDays className="w-4 h-4" /> {new Date(page.data.lastModified).toLocaleDateString("en-US", {
+            <CalendarDays className="w-4 h-4 text-muted-foreground/90" /> {new Date(page.data.lastModified).toLocaleDateString("en-US", {
               month: "short",
               day: "numeric",
               year: "numeric",
             })}
           </span>
           <span>·</span>
-          <span className="flex items-center gap-1">
+          <span className="flex items-center gap-1 text-muted-foreground/90">
             <Clock className="w-4 h-4" /> <ReadingTime selector="main" />
           </span>
         </div>
@@ -69,7 +73,10 @@ export default async function Page(props: {
             a: createRelativeLink(source, page),
           })}
         />
+
+
         {showCards && <FolderCards folder={folderSlug} />}
+        {showCardsRoot && <FolderCardsRoot folder={folderSlugRoot} />}
       </DocsBody>
     </DocsPage>
   );

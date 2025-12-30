@@ -1,5 +1,7 @@
 {
+  "title": "Byte Notes",
   "pages": [
+    "home",
     "full-stack",
     "data-science",
     "cs-101"

@@ -1,0 +1,39 @@
+---
+title: "Roman to Integer"
+description: "Convert a Roman numeral to an integer using subtractive pairs. Use the subtractive rule
+    when a smaller symbol appears before a larger one."
+category: "String conversions"
+difficulty: "Easy"
+jsCode: |
+  function romanToInt(romanString) {
+    const map = {I:1,V:5,X:10,L:50,C:100,D:500,M:1000};
+    let total = 0;
+    for (let i = 0; i < romanString.length; i++) {
+      const curr = map[romanString[i]];
+      const next = i + 1 < romanString.length ? map[romanString[i+1]] : 0;
+      if (curr < next) total -= curr;
+      else total += curr;
+    }
+    console.log(total);
+  }
+
+  // Example
+  romanToInt("MCMXCIV"); // 1994
+
+defaultInput: "MCMXCIV"
+javaCode: |
+  public int romanToInt(String romanString) {
+      Map<Character, Integer> map = Map.of(
+          'I', 1, 'V', 5, 'X', 10, 'L', 50,
+          'C', 100, 'D', 500, 'M', 1000
+      );
+      int total = 0;
+      for (int i = 0; i < romanString.length(); i++) {
+          int curr = map.get(romanString.charAt(i));
+          int next = (i + 1 < romanString.length()) ? map.get(romanString.charAt(i + 1)) : 0;
+          if (curr < next) total -= curr;
+          else total += curr;
+      }
+      return total;
+  }
+---

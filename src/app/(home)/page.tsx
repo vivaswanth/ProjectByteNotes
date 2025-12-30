@@ -46,7 +46,7 @@ const Hero = () => {
         <Link
           href="https://www.linkedin.com/in/vidya-vivaswanth/"
           target="new"
-          className={buttonVariants({ variant: "outline", size: "lg" })}>
+          className={buttonVariants({ variant: "secondary", size: "lg" })}>
           <Linkedin className="size-4" />
           Connect with me
         </Link>
